@@ -260,6 +260,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 	props: ['resource', 'resourceName', 'resourceId', 'field'],
 
 	created: function created() {
+		console.log('abc');
 		this.updateDependencyStatus();
 	},
 	data: function data() {
@@ -279,6 +280,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 				for (var _iterator = this.field.dependencies[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 					var dependency = _step.value;
 
+					console.log(dependency);
 					if (dependency.satisfied) {
 						this.dependenciesSatisfied = true;
 						return;
@@ -299,6 +301,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 				}
 			}
 
+			console.log(this.dependenciesSatisfied);
 			this.dependenciesSatisfied = false;
 		}
 	}
