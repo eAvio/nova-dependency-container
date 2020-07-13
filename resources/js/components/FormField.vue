@@ -109,7 +109,6 @@
 			// @todo: align this method with the responsibility of updating the dependency, not verifying the dependency "values"
 			updateDependencyStatus() {
 				for (let dependency of this.field.dependencies) {
-
 					// #93 compatability with flexible-content, which adds a generated attribute for each field
 					let dependencyValue = this.dependencyValues[(this.field.attribute + dependency.field)];
 					if (dependency.hasOwnProperty('empty') && !dependencyValue) {
@@ -127,15 +126,14 @@
 						return;
 					}
 
-					if (dependency.hasOwnProperty('not') && dependencyValue !== dependency.not) {
-						this.dependenciesSatisfied = true;
-						return;
-					}
-
-					if (dependency.hasOwnProperty('value') && dependencyValue == dependency.value) {
-						this.dependenciesSatisfied = true;
-						return;
-					}
+          if(dependency.hasOwnProperty('values')) {
+            for (let value of dependency.values) {
+              if (this.dependencyValues[dependency.field] == value) {
+                this.dependenciesSatisfied = true;
+                return;
+              }
+            }
+          }
 				}
 
 				this.dependenciesSatisfied = false;

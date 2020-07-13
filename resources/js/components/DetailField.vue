@@ -17,6 +17,7 @@
 		props: ['resource', 'resourceName', 'resourceId', 'field'],
 
 		created() {
+		  console.log('abc');
 			this.updateDependencyStatus()
 		},
 
@@ -30,12 +31,13 @@
 
 			updateDependencyStatus() {
 				for (let dependency of this.field.dependencies) {
+				  console.log(dependency);
 					if(dependency.satisfied) {
 						this.dependenciesSatisfied = true;
 						return;
 					}
 				}
-
+        console.log(this.dependenciesSatisfied);
 				this.dependenciesSatisfied = false;
 			},
 
