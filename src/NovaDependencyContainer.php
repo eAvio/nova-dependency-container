@@ -98,17 +98,17 @@ class NovaDependencyContainer extends Field
         ]);
     }
 
-  /**
-   * Get layout for a specified field. Dot notation will result in {field}.{property}. If no dot was found it will
-   * result in {field}.{field}, as it was in previous versions by default.
-   *
-   * @param $field
-   * @param null $values
-   * @return array
-   */
+    /**
+     * Get layout for a specified field. Dot notation will result in {field}.{property}. If no dot was found it will
+     * result in {field}.{field}, as it was in previous versions by default.
+     *
+     * @param $field
+     * @param null $values
+     * @return array
+     */
     protected function getFieldLayout($field, $values = null)
     {
-        if (count( ($field = explode('.', $field)) ) === 1) {
+        if (count(($field = explode('.', $field))) === 1) {
             // backwards compatibility, property becomes field
             $field[1] = $field[0];
         }
@@ -136,11 +136,12 @@ class NovaDependencyContainer extends Field
 
         foreach ($this->meta['dependencies'] as $index => $dependency) {
 
+
             $this->meta['dependencies'][$index]['satisfied'] = false;
 
             if (array_key_exists('empty', $dependency) && empty($resource->{$dependency['property']})) {
 
-              $this->meta['dependencies'][$index]['satisfied'] = true;
+                $this->meta['dependencies'][$index]['satisfied'] = true;
                 continue;
             }
             // inverted `empty()`
@@ -155,21 +156,19 @@ class NovaDependencyContainer extends Field
             }
 
             if (array_key_exists('values', $dependency)) {
-              foreach ($dependency['values'] as $value){
-                if($value == $resource->{$dependency['property']}) {
-                  $this->meta['dependencies'][$index]['satisfied'] = true;
-                  continue;
+                foreach ($dependency['values'] as $value) {
+                    if ($value == $resource->{$dependency['field'] . '_' . $dependency['property']}) {
+                        $this->meta['dependencies'][$index]['satisfied'] = true;
+                        continue;
+                    }
+                    // @todo: quickfix for MorphTo
+                    $morphable_attribute = $resource->getAttribute($dependency['property'] . '_type');
+                    if ($morphable_attribute !== null && Str::endsWith($morphable_attribute, '\\' . $dependency['value'])) {
+                        $this->meta['dependencies'][$index]['satisfied'] = true;
+                        continue;
+                    }
                 }
-                // @todo: quickfix for MorphTo
-                $morphable_attribute = $resource->getAttribute($dependency['property'].'_type');
-                if($morphable_attribute !== null && Str::endsWith($morphable_attribute, '\\'.$dependency['value'])) {
-                  $this->meta['dependencies'][$index]['satisfied'] = true;
-                  continue;
-                }
-              }
-
             }
-
         }
     }
 
@@ -199,7 +198,7 @@ class NovaDependencyContainer extends Field
      */
     public function fillInto(NovaRequest $request, $model, $attribute, $requestAttribute = null)
     {
-        foreach($this->meta['fields'] as $field) {
+        foreach ($this->meta['fields'] as $field) {
             $field->fill($request, $model);
         }
     }
@@ -212,8 +211,10 @@ class NovaDependencyContainer extends Field
      */
     public function areDependenciesSatisfied(NovaRequest $request)
     {
-        if (!isset($this->meta['dependencies'])
-            || !is_array($this->meta['dependencies'])) {
+        if (
+            !isset($this->meta['dependencies'])
+            || !is_array($this->meta['dependencies'])
+        ) {
             return false;
         }
 
@@ -237,12 +238,12 @@ class NovaDependencyContainer extends Field
                 $satisfiedCounts++;
             }
 
-            if (array_key_exists('values', $dependency)){
-               foreach ($dependency['values'] as $value){
-                 if($value == $request->get($dependency['field'])){
-                   $satisfiedCounts++;
-                 }
-               }
+            if (array_key_exists('values', $dependency)) {
+                foreach ($dependency['values'] as $value) {
+                    if ($value == $request->get($dependency['field'])) {
+                        $satisfiedCounts++;
+                    }
+                }
             }
         }
         return $satisfiedCounts == count($this->meta['dependencies']);
@@ -258,10 +259,12 @@ class NovaDependencyContainer extends Field
     protected function getSituationalRulesSet(NovaRequest $request, string $propertyName = 'rules')
     {
 
-      $fieldsRules = [$this->attribute => []];
-        if (!$this->areDependenciesSatisfied($request)
+        $fieldsRules = [$this->attribute => []];
+        if (
+            !$this->areDependenciesSatisfied($request)
             || !isset($this->meta['fields'])
-            || !is_array($this->meta['fields'])) {
+            || !is_array($this->meta['fields'])
+        ) {
             return $fieldsRules;
         }
 
