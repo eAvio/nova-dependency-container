@@ -127,7 +127,8 @@ class NovaDependencyContainer extends Field
             // backwards compatibility, property becomes field
             $field[1] = $field[0];
         }
-        return [
+        // if ($values != null) {
+        $return = [
             // literal form input name
             'field' => $field[0],
             // property to compare
@@ -135,6 +136,14 @@ class NovaDependencyContainer extends Field
             // values to compare
             'values' => $values,
         ];
+        return $return;
+        // } else
+        //     return [
+        //         // literal form input name
+        //         'field' => $field[0],
+        //         // property to compare
+        //         'property' => $field[1]
+        //     ];
     }
 
     /**
@@ -160,7 +169,7 @@ class NovaDependencyContainer extends Field
                 continue;
             }
             // inverted `empty()`
-            if (array_key_exists('notEmpty', $dependency) && !empty($resource->{$dependency['property']})) {
+            if (array_key_exists('not', $dependency) && !empty($resource->{$dependency['property']})) {
                 $this->meta['dependencies'][$index]['satisfied'] = true;
                 continue;
             }
@@ -263,7 +272,7 @@ class NovaDependencyContainer extends Field
                 $satisfiedCounts++;
             }
 
-            if (array_key_exists('values', $dependency)) {
+            if (array_key_exists('values', $dependency) && $dependency['values'] != null) {
                 foreach ($dependency['values'] as $value) {
                     if ($value == $request->get($dependency['field'])) {
                         $satisfiedCounts++;
