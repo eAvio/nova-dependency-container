@@ -128,7 +128,7 @@ class NovaDependencyContainer extends Field
             $field[1] = $field[0];
         }
         // if ($values != null) {
-        $return = [
+        return [
             // literal form input name
             'field' => $field[0],
             // property to compare
@@ -136,7 +136,6 @@ class NovaDependencyContainer extends Field
             // values to compare
             'values' => $values,
         ];
-        return $return;
         // } else
         //     return [
         //         // literal form input name
