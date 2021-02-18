@@ -272,11 +272,18 @@ class NovaDependencyContainer extends Field
             }
 
             if (array_key_exists('values', $dependency) && $dependency['values'] != null) {
-                foreach ($dependency['values'] as $value) {
-                    if ($value == $request->get($dependency['field'])) {
-                        $satisfiedCounts++;
+                if(is_array($dependency['values'])){
+                    foreach ($dependency['values'] as $value) {
+                        if ($value == $request->get($dependency['field'])) {
+                            $satisfiedCounts++;
+                        }
                     }
+                }else{
+                    if ($dependency['values'] == $request->get($dependency['field'])) {
+                            $satisfiedCounts++;
+                        }
                 }
+                
             }
         }
         return $satisfiedCounts == count($this->meta['dependencies']);
